@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Interest Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI,Arial,sans-serif;
+}
+
+body{
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:url("anmol.jpg") no-repeat center/cover;
+    position:relative;
+}
+
+body::before{
+content:"";
+position:absolute;
+inset:0;
+backdrop-filter:blur(12px);
+background:rgba(0,0,0,.4);
+}
+
+.calculator{
+width:400px;
+padding:35px;
+border-radius:18px;
+background:rgba(255,255,255,.13);
+box-shadow:0 25px 70px rgba(0,0,0,.6);
+color:white;
+transition:.4s;
+}
+
+.calculator:hover{
+transform:translateY(-6px);
+}
+
+h2{
+text-align:center;
+margin-bottom:25px;
+}
+
+.field{
+margin-bottom:14px;
+}
+
+label{
+font-size:13px;
+opacity:.85;
+}
+
+input,select{
+width:100%;
+margin-top:6px;
+padding:11px;
+border:none;
+border-radius:10px;
+font-size:15px;
+background:rgba(255,255,255,.95);
+}
+
+input:focus,select:focus{
+box-shadow:0 0 0 2px #00d4ff;
+outline:none;
+}
+
+button{
+width:100%;
+margin-top:18px;
+padding:13px;
+font-size:16px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+background:linear-gradient(135deg,#00d4ff,#00ffa6);
+font-weight:600;
+transition:.3s;
+}
+
+button:hover{
+transform:translateY(-3px);
+box-shadow:0 10px 25px rgba(0,255,200,.5);
+}
+
+.result{
+margin-top:20px;
+padding:16px;
+border-radius:12px;
+background:rgba(255,255,255,.18);
+text-align:center;
+font-size:16px;
+min-height:55px;
+}
+
+.error{ color:#ffbcbc; }
+.success{ color:#c8ffe5; }
+
+</style>
+</head>
+
+<body>
+
+<div class="calculator">
+
+<h2>Interest Calculator</h2>
+
+<div class="field">
+<label>Calculation Type</label>
+<select id="calcType">
+<option value="">-- Select --</option>
+<option value="simple">Simple Interest</option>
+<option value="compound">Compound Interest</option>
+<option value="both">Both</option>
+</select>
+</div>
+
+<div class="field">
+<label>Principal Amount (₹)</label>
+<input type="number" id="principal">
+</div>
+
+<div class="field">
+<label>Rate of Interest (%)</label>
+<input type="number" id="rate">
+</div>
+
+<div class="field">
+<label>Time Type</label>
+<select id="timeType" onchange="toggleTime()">
+<option value="">-- Select --</option>
+<option value="year">Years</option>
+<option value="month">Months</option>
+</select>
+</div>
+
+<div class="field" id="yearBox" style="display:none;">
+<input type="number" id="years" placeholder="Enter years">
+</div>
+
+<div class="field" id="monthBox" style="display:none;">
+<input type="number" id="months" placeholder="Enter months">
+</div>
+
+<button onclick="calculate()">Calculate</button>
+
+<div class="result" id="output"></div>
+
+</div>
+
+<script>
+
+
+function toggleTime(){
+
+let type = document.getElementById("timeType").value;
+
+let yearBox = document.getElementById("yearBox");
+let monthBox = document.getElementById("monthBox");
+
+yearBox.style.display="none";
+monthBox.style.display="none";
+
+/* Clear previous values */
+document.getElementById("years").value="";
+document.getElementById("months").value="";
+
+if(type==="year"){
+yearBox.style.display="block";
+}
+
+if(type==="month"){
+monthBox.style.display="block";
+}
+
+}
+
+function calculate(){
+
+let type = document.getElementById("calcType").value;
+let P = parseFloat(document.getElementById("principal").value);
+let R = parseFloat(document.getElementById("rate").value);
+let timeType = document.getElementById("timeType").value;
+
+let years = parseFloat(document.getElementById("years").value);
+let months = parseFloat(document.getElementById("months").value);
+
+let output = document.getElementById("output");
+
+let T = 0;
+
+/* Determine time */
+
+if(timeType === "year" && years > 0){
+    T = years;
+}
+else if(timeType === "month" && months > 0){
+    T = months / 12;
+}
+else{
+    output.innerHTML = "Please enter time correctly.";
+    output.className = "result error";
+    return;
+}
+
+/* Validation */
+
+if(!type || P<=0 || R<=0){
+    output.innerHTML = "Please fill all fields properly.";
+    output.className = "result error";
+    return;
+}
+
+/* Calculations */
+
+let SI = (P * R * T) / 100;
+let CI = P * Math.pow((1 + R/100), T) - P;
+
+output.className = "result success";
+
+if(type === "simple"){
+    output.innerHTML = `Simple Interest: ₹${SI.toFixed(2)}`;
+}
+else if(type === "compound"){
+    output.innerHTML = `Compound Interest: ₹${CI.toFixed(2)}`;
+}
+else{
+    output.innerHTML = `
+    Simple Interest: ₹${SI.toFixed(2)}<br>
+    Compound Interest: ₹${CI.toFixed(2)}
+    `;
+}
+
+}
+
+</script>
+
+</body>
+</html>

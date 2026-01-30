@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anmol Sharma | Projects</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, Helvetica, sans-serif;
+}
+
+/* BLUR BACKGROUND */
+
+body::before{
+content:"";
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:url("anmol.jpg") no-repeat center/cover;
+filter:blur(12px);
+z-index:-1;
+}
+
+/* MAIN PROJECT SECTION */
+
+.projects{
+min-height:100vh;
+padding:80px 8%;
+background:rgba(0,0,0,0.65);
+color:white;
+text-align:center;
+}
+
+.projects h1{
+font-size:48px;
+margin-bottom:60px;
+letter-spacing:2px;
+}
+
+/* PROJECT CONTAINER */
+
+.project-container{
+display:flex;
+justify-content:center;
+gap:40px;
+flex-wrap:wrap;
+}
+
+/* PROJECT CARD */
+
+.project-card{
+width:300px;
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(6px);
+padding:25px;
+border-radius:20px;
+transition:0.4s;
+box-shadow:0 10px 30px rgba(0,0,0,0.5);
+cursor:pointer;
+}
+
+/* CLEAN LINK */
+
+.project-card a{
+text-decoration:none;
+color:white;
+display:block;
+}
+
+/* IMAGE */
+
+.project-card img{
+width:100%;
+height:170px;
+object-fit:cover;
+border-radius:15px;
+margin-bottom:15px;
+transition:0.4s;
+}
+
+/* HOVER EFFECT */
+
+.project-card:hover{
+transform:translateY(-15px) scale(1.05);
+background:rgba(255,255,255,0.22);
+}
+
+.project-card:hover img{
+transform:scale(1.15);
+}
+
+/* TEXT */
+
+.project-card h2{
+margin:15px 0;
+font-size:24px;
+color:#00d9ff;
+}
+
+.project-card p{
+font-size:15px;
+margin:6px 0;
+opacity:0.9;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+.project-container{
+flex-direction:column;
+align-items:center;
+}
+}
+
+</style>
+</head>
+
+<body>
+
+<section class="projects">
+
+<h1>My Projects</h1>
+
+<div class="project-container">
+
+<!-- PROJECT 1 -->
+
+<div class="project-card">
+<a href="calculate.html" target="_blank">
+<img src="calculate.jpg" alt="calculate">
+<h2>Calculate</h2>
+</a>
+</div>
+
+<!-- PROJECT 2 -->
+
+<div class="project-card">
+<a href="project_2.html" target="_blank">
+<img src="project2.jpg" alt="Project 2">
+<h2>Project Two</h2>
+<p>Click to view project</p>
+</a>
+</div>
+
+<!-- PROJECT 3 -->
+
+<div class="project-card">
+<a href="project_3.html" target="_blank">
+<img src="project3.jpg" alt="Project 3">
+<h2>Project Three</h2>
+<p>Click to view project</p>
+</a>
+</div>
+
+</div>
+
+</section>
+
+</body>
+</html>

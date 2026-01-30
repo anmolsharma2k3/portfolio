@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculate Tools</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, Helvetica, sans-serif;
+}
+
+/* BLUR BACKGROUND */
+
+body::before{
+content:"";
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:url("anmol.jpg") no-repeat center/cover;
+filter:blur(12px);
+z-index:-1;
+}
+
+/* MAIN CALCULATE SECTION */
+
+.calculate{
+min-height:100vh;
+padding:80px 8%;
+background:rgba(0,0,0,0.65);
+color:white;
+text-align:center;
+}
+
+.calculate h1{
+font-size:48px;
+margin-bottom:60px;
+letter-spacing:2px;
+}
+
+/* CONTAINER */
+
+.calculate-container{
+display:flex;
+justify-content:center;
+gap:40px;
+flex-wrap:wrap;
+}
+
+/* CARD */
+
+.calculate-card{
+width:300px;
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(6px);
+padding:25px;
+border-radius:20px;
+transition:0.4s;
+box-shadow:0 10px 30px rgba(0,0,0,0.5);
+cursor:pointer;
+}
+
+/* LINK CLEAN */
+
+.calculate-card a{
+text-decoration:none;
+color:white;
+display:block;
+}
+
+/* IMAGE */
+
+.calculate-card img{
+width:100%;
+height:170px;
+object-fit:cover;
+border-radius:15px;
+margin-bottom:15px;
+transition:0.4s;
+}
+
+/* HOVER EFFECT */
+
+.calculate-card:hover{
+transform:translateY(-15px) scale(1.05);
+background:rgba(255,255,255,0.22);
+}
+
+.calculate-card:hover img{
+transform:scale(1.15);
+}
+
+/* TEXT */
+
+.calculate-card h2{
+margin:15px 0;
+font-size:24px;
+color:#00d9ff;
+}
+
+.calculate-card p{
+font-size:15px;
+margin:6px 0;
+opacity:0.9;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+.calculate-container{
+flex-direction:column;
+align-items:center;
+}
+}
+
+</style>
+</head>
+
+<body>
+
+<section class="calculate">
+
+<h1>Calculators</h1>
+
+<div class="calculate-container">
+
+<!-- BASIC CALCULATOR -->
+
+<div class="calculate-card">
+<a href="calculator.html" target="_blank">
+<img src="cal.jpg" alt="Calculator">
+<h2>Calculator</h2>
+<p>Basic arithmetic operations</p>
+</a>
+</div>
+
+<!-- INTEREST CALCULATOR -->
+
+<div class="calculate-card">
+<a href="interest.html" target="_blank">
+<img src="interest.jpg" alt="Interest Calculator">
+<h2>Interest Calculator</h2>
+<p>Simple & compound interest</p>
+</a>
+</div>
+
+<!-- AGE CALCULATOR -->
+
+<div class="calculate-card">
+<a href="age.html" target="_blank">
+<img src="age.jpg" alt="Age Calculator">
+<h2>Age Calculator</h2>
+<p>Calculate age in years & days</p>
+</a>
+</div>
+
+</div>
+
+</section>
+
+</body>
+</html>

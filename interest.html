@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Professional Interest Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+/* Reset */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* Background */
+
+body{
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:url("anmol.jpg") no-repeat center/cover;
+    position:relative;
+}
+
+body::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    backdrop-filter: blur(12px);
+    background:rgba(0,0,0,0.35);
+}
+
+/* Main Card */
+
+.calculator{
+    position:relative;
+    width:380px;
+    padding:35px;
+    border-radius:18px;
+    background:rgba(255,255,255,0.12);
+    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+    color:#fff;
+    transition:0.4s ease;
+}
+
+.calculator:hover{
+    transform:translateY(-6px);
+    box-shadow:0 30px 80px rgba(0,0,0,0.7);
+}
+
+/* Heading */
+
+.calculator h2{
+    text-align:center;
+    font-weight:600;
+    margin-bottom:25px;
+    letter-spacing:1px;
+}
+
+/* Inputs */
+
+.field{
+    margin-bottom:14px;
+}
+
+label{
+    font-size:13px;
+    opacity:0.85;
+}
+
+input, select{
+    width:100%;
+    margin-top:6px;
+    padding:11px;
+    border-radius:10px;
+    border:none;
+    outline:none;
+    font-size:15px;
+    background:rgba(255,255,255,0.9);
+    transition:0.3s;
+}
+
+input:focus, select:focus{
+    box-shadow:0 0 0 2px #00d4ff;
+}
+
+/* Button */
+
+button{
+    width:100%;
+    margin-top:15px;
+    padding:13px;
+    font-size:16px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    background:linear-gradient(135deg,#00d4ff,#00ffa6);
+    color:#000;
+    font-weight:600;
+    transition:0.3s ease;
+}
+
+button:hover{
+    transform:translateY(-3px);
+    box-shadow:0 10px 25px rgba(0,255,200,0.5);
+}
+
+/* Result */
+
+.result-box{
+    margin-top:20px;
+    padding:15px;
+    background:rgba(255,255,255,0.15);
+    border-radius:12px;
+    text-align:center;
+    font-size:16px;
+    line-height:1.7;
+    min-height:55px;
+    transition:0.3s;
+}
+
+.error{
+    color:#ffb3b3;
+}
+
+.success{
+    color:#b9ffde;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="calculator">
+
+<h2>Interest Calculator</h2>
+
+<div class="field">
+<label>Select Calculation Type</label>
+<select id="type">
+    <option value="">-- Choose Option --</option>
+    <option value="simple">Simple Interest</option>
+    <option value="compound">Compound Interest</option>
+    <option value="both">Both</option>
+</select>
+</div>
+
+<div class="field">
+<label>Principal Amount (₹)</label>
+<input type="number" id="principal" placeholder="Enter amount">
+</div>
+<div class="field">
+    <label>Rate Type</label>
+    <select id="rateType">
+        <option value="">-- Select --</option>
+        <option value="month">Per Month</option>
+        <option value="year">Per Year</option>
+    </select>
+    </div>
+<div class="field">
+<label>Rate of Interest (%)</label>
+<input type="number" id="rate" placeholder="Enter rate">
+</div>    
+<div class="field">
+    <label>Time Type</label>
+    <select id="timeType">
+        <option value="">-- Select --</option>
+        <option value="month">Months</option>
+        <option value="year">Years</option>
+    </select>
+    <label>Enter Time🕰️</label>
+    <input type="number" id="time" placeholder="Enter time">
+    </div>
+    
+    
+<button onclick="calculateInterest()">Calculate</button>
+
+<div class="result-box" id="result"></div>
+
+</div>
+
+<script>
+
+    function calculateInterest(){
+    
+        let type = document.getElementById("type").value;
+        let P = parseFloat(document.getElementById("principal").value);
+        let R = parseFloat(document.getElementById("rate").value);
+        let timeValue = parseFloat(document.getElementById("time").value);
+    
+        let rateType = document.getElementById("rateType").value;
+        let timeType = document.getElementById("timeType").value;
+    
+        let resultBox = document.getElementById("result");
+    
+        if(type==="" || rateType==="" || timeType==="" || isNaN(P) || isNaN(R) || isNaN(timeValue)){
+            resultBox.innerHTML = "Please enter all values correctly.";
+            resultBox.className="result-box error";
+            return;
+        }
+    
+        let T;
+    
+        /* Make rate & time same unit */
+    
+        if(rateType === timeType){
+            T = timeValue;
+        }
+        else if(rateType === "year" && timeType === "month"){
+            T = timeValue / 12;
+        }
+        else if(rateType === "month" && timeType === "year"){
+            T = timeValue * 12;
+        }
+    
+        /* Simple Interest */
+        let SI = (P * R * T) / 100;
+    
+        /* Compound Interest */
+        let CI = P * Math.pow((1 + R/100), T) - P;
+    
+        resultBox.className="result-box success";
+    
+        if(type === "simple"){
+            resultBox.innerHTML = `Simple Interest: ₹${SI.toFixed(2)}`;
+        }
+        else if(type === "compound"){
+            resultBox.innerHTML = `Compound Interest: ₹${CI.toFixed(2)}`;
+        }
+        else{
+            resultBox.innerHTML = `
+            Simple Interest: ₹${SI.toFixed(2)}<br>
+            Compound Interest: ₹${CI.toFixed(2)}
+            `;
+        }
+    }
+    
+    </script>
+    
+    
+
+</body>
+</html>
