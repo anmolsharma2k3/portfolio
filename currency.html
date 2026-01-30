@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Currency Converter</title>
+    <style>
+        /* --- NEW CSS STYLES --- */
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* Keep content centered */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            position: relative;
+            overflow: hidden; /* Prevents scrollbars from blurred edges */
+        }
+    
+        /* The Pseudo-element for the blurred background image */
+        body::before {
+            content: "";
+            position: absolute;
+            top: -20px; left: -20px; right: -20px; bottom: -20px; /* Extend edges slightly */
+            
+            /* REPLACE 'image_0.png' WITH YOUR IMAGE PATH */
+            background-image: url('anmol.jpg'); 
+            
+            background-size: cover;
+            background-position: center;
+            filter: blur(15px) brightness(0.8); /* Adjust blur amount here */
+            z-index: -1; /* Push behind the content */
+        }
+    
+        .converter-card {
+            /* Slight transparency to let background subtly show through */
+            background: rgba(36, 34, 34, 0.95);
+            /* Stronger shadow so it pops off the busy background */
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2), 0 5px 15px rgba(0,0,0,0.1);
+            padding: 2.5rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            backdrop-filter: blur(5px); /* Adds an extra frosted glass effect to card itself */
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+    
+        h2 {
+            margin-top: 0;
+            color: #dcedff;
+            margin-bottom: 1.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+    
+        .input-group {
+            margin-bottom: 1.2rem;
+            text-align: left;
+        }
+    
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #f3ecec;
+        }
+    
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eee; /* Slightly thicker, lighter border initially */
+            border-radius: 10px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            background-color: #f9f9f9;
+            transition: all 0.3s ease; /* Smooth transition for all changes */
+        }
+    
+        /* NEW: Hover effect for inputs before clicking */
+        input:hover, select:hover {
+            border-color: #aaa;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            transform: translateY(-1px);
+        }
+    
+        /* Enhanced Focus state */
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4a90e2;
+            background-color: #fff;
+            box-shadow: 0 6px 15px rgba(74, 144, 226, 0.2);
+            transform: translateY(-3px); /* Bigger lift on focus */
+        }
+    
+        .currency-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            margin-bottom: 1.2rem;
+        }
+    
+        .currency-col {
+            flex: 1;
+            text-align: left;
+        }
+    
+        .swap-btn {
+            background: #fff;
+            border: 2px solid #eee;
+            color: #666;
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            cursor: pointer;
+            font-size: 1.3rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Bouncy transition */
+            margin-bottom: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+    
+        /* Enhanced Swap Hover */
+        .swap-btn:hover {
+            background: #4a90e2;
+            color: white;
+            border-color: #4a90e2;
+            transform: rotate(180deg) scale(1.1); /* Spin and grow */
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+        }
+    
+        button.convert-btn {
+            width: 100%;
+            padding: 14px;
+            /* Added background size for gradient animation */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%);
+            background-size: 200% auto;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.3);
+            transition: all 0.4s ease;
+        }
+    
+        /* Enhanced Convert Button Hover */
+        button.convert-btn:hover {
+            background-position: right center; /* Move gradient */
+            transform: translateY(-4px) scale(1.02); /* Lift higher and grow slightly */
+            box-shadow: 0 10px 25px rgba(118, 75, 162, 0.5); /* Stronger glow */
+        }
+    
+        button.convert-btn:active {
+            transform: translateY(-1px) scale(0.98);
+            box-shadow: 0 3px 10px rgba(255, 202, 202, 0.3);
+        }
+    
+        #result {
+            margin-top: 1.5rem;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #f2f4f6;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
+        }
+    
+        .rate-info {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: #f6f6f6;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="converter-card">
+        <h2>🌍 Currency Exchange</h2>
+        
+        <div class="input-group">
+            <label>Amount</label>
+            <input type="number" id="amount" value="1" min="0" placeholder="0.00">
+        </div>
+
+        <div class="currency-row">
+            <div class="currency-col">
+                <label>From</label>
+                <select id="fromCurrency"></select>
+            </div>
+
+            <button class="swap-btn" onclick="swapCurrencies()" title="Swap currencies">⇅</button>
+
+            <div class="currency-col">
+                <label>To</label>
+                <select id="toCurrency"></select>
+            </div>
+        </div>
+
+        <button class="convert-btn" onclick="convertCurrency()">Convert</button>
+
+        <div id="result">---</div>
+        <div class="rate-info" id="status">Select currencies to start</div>
+    </div>
+
+    <script>
+        // Comprehensive list of currencies (Code: Name)
+        const currencyList = {
+            "USD": "United States Dollar",
+            "EUR": "Euro",
+            "GBP": "British Pound Sterling",
+            "INR": "Indian Rupee",
+            "JPY": "Japanese Yen",
+            "AUD": "Australian Dollar",
+            "CAD": "Canadian Dollar",
+            "CNY": "Chinese Yuan",
+            "AED": "UAE Dirham",
+            "AFN": "Afghan Afghani",
+            "ALL": "Albanian Lek",
+            "AMD": "Armenian Dram",
+            "ANG": "Neth. Antillean Guilder",
+            "AOA": "Angolan Kwanza",
+            "ARS": "Argentine Peso",
+            "AZN": "Azerbaijani Manat",
+            "BAM": "Bosnia-Herz. Conv. Mark",
+            "BBD": "Barbadian Dollar",
+            "BDT": "Bangladeshi Taka",
+            "BGN": "Bulgarian Lev",
+            "BHD": "Bahraini Dinar",
+            "BIF": "Burundian Franc",
+            "BMD": "Bermudian Dollar",
+            "BND": "Brunei Dollar",
+            "BOB": "Bolivian Boliviano",
+            "BRL": "Brazilian Real",
+            "BSD": "Bahamian Dollar",
+            "BTN": "Bhutanese Ngultrum",
+            "BWP": "Botswana Pula",
+            "BYN": "Belarusian Ruble",
+            "BZD": "Belize Dollar",
+            "CDF": "Congolese Franc",
+            "CHF": "Swiss Franc",
+            "CLP": "Chilean Peso",
+            "COP": "Colombian Peso",
+            "CRC": "Costa Rican Colón",
+            "CUP": "Cuban Peso",
+            "CVE": "Cape Verdean Escudo",
+            "CZK": "Czech Koruna",
+            "DJF": "Djiboutian Franc",
+            "DKK": "Danish Krone",
+            "DOP": "Dominican Peso",
+            "DZD": "Algerian Dinar",
+            "EGP": "Egyptian Pound",
+            "ERN": "Eritrean Nakfa",
+            "ETB": "Ethiopian Birr",
+            "FJD": "Fijian Dollar",
+            "FKP": "Falkland Islands Pound",
+            "GEL": "Georgian Lari",
+            "GHS": "Ghanaian Cedi",
+            "GIP": "Gibraltar Pound",
+            "GMD": "Gambian Dalasi",
+            "GNF": "Guinean Franc",
+            "GTQ": "Guatemalan Quetzal",
+            "GYD": "Guyanaese Dollar",
+            "HKD": "Hong Kong Dollar",
+            "HNL": "Honduran Lempira",
+            "HRK": "Croatian Kuna",
+            "HTG": "Haitian Gourde",
+            "HUF": "Hungarian Forint",
+            "IDR": "Indonesian Rupiah",
+            "ILS": "Israeli New Shekel",
+            "IQD": "Iraqi Dinar",
+            "IRR": "Iranian Rial",
+            "ISK": "Icelandic Króna",
+            "JMD": "Jamaican Dollar",
+            "JOD": "Jordanian Dinar",
+            "KES": "Kenyan Shilling",
+            "KGS": "Kyrgystani Som",
+            "KHR": "Cambodian Riel",
+            "KMF": "Comorian Franc",
+            "KRW": "South Korean Won",
+            "KWD": "Kuwaiti Dinar",
+            "KYD": "Cayman Islands Dollar",
+            "KZT": "Kazakhstani Tenge",
+            "LAK": "Laotian Kip",
+            "LBP": "Lebanese Pound",
+            "LKR": "Sri Lankan Rupee",
+            "LRD": "Liberian Dollar",
+            "LSL": "Lesotho Loti",
+            "LYD": "Libyan Dinar",
+            "MAD": "Moroccan Dirham",
+            "MDL": "Moldovan Leu",
+            "MGA": "Malagasy Ariary",
+            "MKD": "Macedonian Denar",
+            "MMK": "Myanma Kyat",
+            "MNT": "Mongolian Tugrik",
+            "MOP": "Macanese Pataca",
+            "MUR": "Mauritian Rupee",
+            "MVR": "Maldivian Rufiyaa",
+            "MWK": "Malawian Kwacha",
+            "MXN": "Mexican Peso",
+            "MYR": "Malaysian Ringgit",
+            "MZN": "Mozambican Metical",
+            "NAD": "Namibian Dollar",
+            "NGN": "Nigerian Naira",
+            "NIO": "Nicaraguan Córdoba",
+            "NOK": "Norwegian Krone",
+            "NPR": "Nepalese Rupee",
+            "NZD": "New Zealand Dollar",
+            "OMR": "Omani Rial",
+            "PAB": "Panamanian Balboa",
+            "PEN": "Peruvian Sol",
+            "PGK": "Papua New Guinean Kina",
+            "PHP": "Philippine Peso",
+            "PKR": "Pakistani Rupee",
+            "PLN": "Polish Złoty",
+            "PYG": "Paraguayan Guaraní",
+            "QAR": "Qatari Riyal",
+            "RON": "Romanian Leu",
+            "RSD": "Serbian Dinar",
+            "RUB": "Russian Ruble",
+            "RWF": "Rwandan Franc",
+            "SAR": "Saudi Riyal",
+            "SBD": "Solomon Islands Dollar",
+            "SCR": "Seychellois Rupee",
+            "SDG": "Sudanese Pound",
+            "SEK": "Swedish Krona",
+            "SGD": "Singapore Dollar",
+            "SHP": "Saint Helena Pound",
+            "SLL": "Sierra Leonean Leone",
+            "SOS": "Somali Shilling",
+            "SRD": "Surinamese Dollar",
+            "SSP": "South Sudanese Pound",
+            "STN": "São Tomé and Príncipe Dobra",
+            "SYP": "Syrian Pound",
+            "SZL": "Eswatini Lilangeni",
+            "THB": "Thai Baht",
+            "TJS": "Tajikistani Somoni",
+            "TMT": "Turkmenistani Manat",
+            "TND": "Tunisian Dinar",
+            "TOP": "Tongan Pa'anga",
+            "TRY": "Turkish Lira",
+            "TTD": "Trinidad and Tobago Dollar",
+            "TWD": "New Taiwan Dollar",
+            "TZS": "Tanzanian Shilling",
+            "UAH": "Ukrainian Hryvnia",
+            "UGX": "Ugandan Shilling",
+            "UYU": "Uruguayan Peso",
+            "UZS": "Uzbekistan Som",
+            "VES": "Venezuelan Bolívar Soberano",
+            "VND": "Vietnamese Dong",
+            "VUV": "Vanuatu Vatu",
+            "WST": "Samoan Tala",
+            "XAF": "CFA Franc BEAC",
+            "XCD": "East Caribbean Dollar",
+            "XOF": "CFA Franc BCEAO",
+            "XPF": "CFP Franc",
+            "YER": "Yemeni Rial",
+            "ZAR": "South African Rand",
+            "ZMW": "Zambian Kwacha",
+            "ZWL": "Zimbabwean Dollar"
+        };
+
+        const fromSelect = document.getElementById('fromCurrency');
+        const toSelect = document.getElementById('toCurrency');
+        const apiURL = 'https://api.exchangerate-api.com/v4/latest/USD';
+
+        // 1. Populate Dropdowns automatically on page load
+        Object.keys(currencyList).forEach(currency => {
+            const option1 = document.createElement('option');
+            const option2 = document.createElement('option');
+            
+            option1.value = option2.value = currency;
+            option1.text = option2.text = `${currency} - ${currencyList[currency]}`;
+
+            fromSelect.appendChild(option1);
+            toSelect.appendChild(option2);
+        });
+
+        // Set Default Values (USD to EUR)
+        fromSelect.value = "USD";
+        toSelect.value = "EUR";
+
+        // 2. Swap Function
+        function swapCurrencies() {
+            const temp = fromSelect.value;
+            fromSelect.value = toSelect.value;
+            toSelect.value = temp;
+            convertCurrency(); // Update result immediately after swap
+        }
+
+        // 3. Conversion Logic
+        async function convertCurrency() {
+            const amount = document.getElementById('amount').value;
+            const from = fromSelect.value;
+            const to = toSelect.value;
+            const resultDisplay = document.getElementById('result');
+            const statusDisplay = document.getElementById('status');
+
+            if (amount === '' || amount < 0) {
+                alert("Please enter a valid amount");
+                return;
+            }
+
+            statusDisplay.textContent = "Fetching latest rates...";
+
+            try {
+                const response = await fetch(apiURL);
+                const data = await response.json();
+                const rates = data.rates;
+
+                if (!rates[from] || !rates[to]) {
+                    resultDisplay.textContent = "N/A";
+                    statusDisplay.textContent = "Currency not supported by API";
+                    return;
+                }
+
+                // Calculate Cross Rate (Since base is USD)
+                const rateFrom = rates[from];
+                const rateTo = rates[to];
+                const convertedAmount = (amount / rateFrom) * rateTo;
+                const singleUnitRate = (1 / rateFrom) * rateTo;
+
+                resultDisplay.textContent = `${convertedAmount.toFixed(2)} ${to}`;
+                statusDisplay.textContent = `1 ${from} = ${singleUnitRate.toFixed(4)} ${to}`;
+
+            } catch (error) {
+                console.error(error);
+                resultDisplay.textContent = "Error";
+                statusDisplay.textContent = "Network error. Try again later.";
+            }
+        }
+        
+        // Initial conversion on load
+        convertCurrency();
+    </script>
+</body>
+</html>
