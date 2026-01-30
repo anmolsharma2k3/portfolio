@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>About Me</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
+
+/* Full section */
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+}
+
+/* Background blur layer */
+.bg-blur{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:url('anmol.jpg') center/cover no-repeat;
+    filter: blur(15px);
+    transform:scale(1.1);
+    z-index:-1;
+}
+
+/* Dark overlay */
+.bg-overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.55);
+    z-index:-1;
+}
+
+/* About card */
+.about-card{
+    width:85%;
+    max-width:900px;
+    background:rgba(255,255,255,0.15);
+    backdrop-filter: blur(12px);
+    border-radius:25px;
+    padding:60px;
+    color:white;
+    text-align:center;
+    box-shadow:0 20px 40px rgba(0,0,0,0.5);
+    transition:0.4s;
+}
+
+.about-card:hover{
+    transform:translateY(-12px) scale(1.03);
+}
+
+/* Heading */
+.about-card h1{
+    font-size:42px;
+    margin-bottom:15px;
+}
+
+.about-card h1 span{
+    color:#00ffd5;
+}
+
+/* Subtitle */
+.about-card h3{
+    font-weight:400;
+    color:#ddd;
+    margin-bottom:25px;
+}
+
+/* Text */
+.about-card p{
+    line-height:1.9;
+    font-size:16px;
+    color:#f1f1f1;
+    margin-bottom:18px;
+}
+
+/* Button */
+.about-btn{
+    display:inline-block;
+    margin-top:25px;
+    padding:12px 35px;
+    border:2px solid #00ffd5;
+    border-radius:50px;
+    color:#00ffd5;
+    text-decoration:none;
+    transition:0.4s;
+}
+
+.about-btn:hover{
+    background:#00ffd5;
+    color:#000;
+    box-shadow:0 0 18px #00ffd5;
+}
+
+/* Responsive */
+@media(max-width:768px){
+    .about-card{
+        padding:35px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- Blurred background image -->
+<div class="bg-blur"></div>
+<div class="bg-overlay"></div>
+
+<!-- About content -->
+<div class="about-card">
+
+    <h1>About <span>Me</span></h1>
+    <h3>BCA Student | Web Developer | Tech Enthusiast</h3>
+
+    <p>
+        I am a passionate BCA student with a strong interest in web development and software design.
+        I enjoy creating modern, responsive, and user-friendly websites using HTML, CSS, and JavaScript.
+    </p>
+
+    <p>
+        I have worked on academic projects like Student Management System and Hospital Management System,
+        which helped me gain practical experience in database management and application development.
+    </p>
+
+    <p>
+        I am constantly learning new technologies and improving my skills to build innovative digital solutions.
+    </p>
+
+    <a href="#" class="about-btn">Explore My Work</a>
+
+</div>
+
+</body>
+</html>
