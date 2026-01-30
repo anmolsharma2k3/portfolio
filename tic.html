@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe - SAAB Edition</title>
+    <style>
+        :root {
+            --primary: #ff4757;   /* Red for X */
+            --secondary: #2ed573; /* Green for O */
+            --dark: #2f3542;
+            --light: #ffffff;
+            --modal-bg: rgba(0, 0, 0, 0.95);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            color: var(--light);
+        }
+
+        /* Background Image with Blur */
+        .background {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('anmol.jpg') no-repeat center center/cover;
+            filter: blur(8px);
+            z-index: -1;
+            transform: scale(1.1);
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.85);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        h1 { margin-bottom: 20px; font-size: 2.2rem; text-transform: uppercase; letter-spacing: 2px; }
+
+        /* Inputs & Buttons */
+        input {
+            padding: 12px;
+            margin: 10px 0;
+            width: 100%;
+            border-radius: 5px;
+            border: none;
+            outline: none;
+            text-align: center;
+            font-size: 1rem;
+            background: #dfe4ea;
+            color: #2f3542;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        button:hover { transform: scale(1.05); filter: brightness(1.2); }
+        .btn-mode { background: var(--primary); color: white; width: 100%; margin: 8px 0; }
+        .btn-start { background: var(--secondary); color: white; width: 100%; }
+        .btn-reset { background: var(--secondary); color: white; }
+        .btn-menu { background: #747d8c; color: white; }
+
+        /* Scoreboard */
+        .scoreboard {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.1);
+            padding: 15px 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+        }
+        .score-box { text-align: center; padding: 0 5px; flex: 1; border-right: 1px solid rgba(255,255,255,0.2); }
+        .score-box:last-child { border-right: none; }
+        .score-val { font-size: 1.5rem; font-weight: bold; display: block; margin-top: 5px; }
+
+        /* Game Board */
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px auto;
+            max-width: 300px;
+        }
+
+        .cell {
+            height: 90px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .cell:hover { background: rgba(255,255,255,0.2); }
+        .cell.X { color: var(--primary); }
+        .cell.O { color: var(--secondary); }
+
+        #status { font-size: 1.2rem; margin-bottom: 15px; min-height: 1.5rem; color: #dfe6e9; }
+        .hidden { display: none !important; }
+
+        /* Result Modal (Popup) */
+        .modal-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--modal-bg);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 10;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-msg {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .winner-name { color: var(--secondary); font-weight: bold; font-size: 1.6rem; }
+        .loser-text { font-size: 1rem; color: #bdc3c7; margin-top: 10px; display: block; }
+        .timer-text { font-size: 0.9rem; color: #a4b0be; margin-top: 20px; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+    <div class="background"></div>
+
+    <div class="container">
+        <h1>Tic Tac Toe</h1>
+
+        <div id="menu">
+            <h3>Choose Opponent</h3>
+            <button class="btn-mode" onclick="showNameInput('2P')">2 Players</button>
+            <button class="btn-mode" onclick="showNameInput('AI')">Vs Computer</button>
+        </div>
+
+        <div id="name-form" class="hidden">
+            <h3 id="name-title">Enter Player Names</h3>
+            <input type="text" id="input-p1" placeholder="Player 1 Name (X)">
+            <input type="text" id="input-p2" placeholder="Player 2 Name (O)">
+            <button class="btn-start" onclick="startGame()">Start Game</button>
+            <button class="btn-menu" onclick="showMenu()">Back</button>
+        </div>
+
+        <div id="game" class="hidden">
+            <div class="scoreboard">
+                <div class="score-box">
+                    <span id="name-display-p1">P1</span>
+                    <span id="s-p1" class="score-val">0</span>
+                </div>
+                <div class="score-box">
+                    <span id="name-display-p2">P2</span>
+                    <span id="s-p2" class="score-val">0</span>
+                </div>
+            </div>
+
+            <div id="status">Player X's Turn</div>
+
+            <div class="board">
+                <div class="cell" onclick="handleClick(0)"></div>
+                <div class="cell" onclick="handleClick(1)"></div>
+                <div class="cell" onclick="handleClick(2)"></div>
+                <div class="cell" onclick="handleClick(3)"></div>
+                <div class="cell" onclick="handleClick(4)"></div>
+                <div class="cell" onclick="handleClick(5)"></div>
+                <div class="cell" onclick="handleClick(6)"></div>
+                <div class="cell" onclick="handleClick(7)"></div>
+                <div class="cell" onclick="handleClick(8)"></div>
+            </div>
+
+            <button class="btn-reset" onclick="resetBoard()">Reset Board</button>
+            <button class="btn-menu" onclick="showMenu()">Main Menu</button>
+            
+            <div id="result-modal" class="modal-overlay hidden">
+                <div class="modal-msg" id="modal-text"></div>
+                <button class="btn-reset" onclick="resetBoard()">Restart Now</button>
+                <div class="timer-text" id="countdown-text">Auto restart in 5s...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game Variables
+        let board = ["", "", "", "", "", "", "", "", ""];
+        let currentPlayer = "X";
+        let isGameActive = false;
+        let isVsComputer = false;
+        let p1Name = "Player 1";
+        let p2Name = "Player 2";
+        let scores = { p1: 0, p2: 0 }; // Draw counter removed
+        let resetTimer;
+        let countdownInterval;
+
+        const winningConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
+
+        // --- Setup Functions ---
+        
+        function showMenu() {
+            document.getElementById('game').classList.add('hidden');
+            document.getElementById('name-form').classList.add('hidden');
+            document.getElementById('menu').classList.remove('hidden');
+            clearTimeout(resetTimer);
+            clearInterval(countdownInterval);
+        }
+
+        function showNameInput(mode) {
+            isVsComputer = (mode === 'AI');
+            document.getElementById('menu').classList.add('hidden');
+            document.getElementById('name-form').classList.remove('hidden');
+
+            const p2Input = document.getElementById('input-p2');
+            if (isVsComputer) {
+                p2Input.value = "Computer";
+                p2Input.disabled = true; 
+                document.getElementById('name-title').innerText = "Enter Your Name";
+            } else {
+                p2Input.value = "";
+                p2Input.disabled = false;
+                p2Input.placeholder = "Player 2 Name (O)";
+                document.getElementById('name-title').innerText = "Enter Player Names";
+            }
+        }
+
+        function startGame() {
+            const p1Input = document.getElementById('input-p1').value.trim();
+            const p2Input = document.getElementById('input-p2').value.trim();
+
+            p1Name = p1Input || "Player 1";
+            p2Name = isVsComputer ? "Computer" : (p2Input || "Player 2");
+
+            document.getElementById('name-display-p1').innerText = p1Name + " (X)";
+            document.getElementById('name-display-p2').innerText = p2Name + " (O)";
+            
+            scores = { p1: 0, p2: 0 };
+            updateScoreboard();
+
+            document.getElementById('name-form').classList.add('hidden');
+            document.getElementById('game').classList.remove('hidden');
+            
+            resetBoard();
+        }
+
+        // --- Core Game Logic ---
+
+        function handleClick(index) {
+            if (board[index] !== "" || !isGameActive) return;
+
+            updateCell(index, currentPlayer);
+            if (!checkResult()) {
+                if (isVsComputer && currentPlayer === "O") {
+                    setTimeout(saabFunction, 500); 
+                }
+            }
+        }
+
+        function updateCell(index, player) {
+            board[index] = player;
+            const cell = document.querySelectorAll('.cell')[index];
+            cell.innerText = player;
+            cell.classList.add(player);
+        }
+
+        function switchPlayer() {
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            let nameToShow = currentPlayer === "X" ? p1Name : p2Name;
+            document.getElementById('status').innerText = `${nameToShow}'s Turn`;
+        }
+
+        function checkResult() {
+            let roundWon = false;
+            for (let i = 0; i < winningConditions.length; i++) {
+                const [a, b, c] = winningConditions[i];
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    roundWon = true;
+                    break;
+                }
+            }
+
+            if (roundWon) {
+                endGame(currentPlayer); // Normal Win
+                return true;
+            }
+
+            if (!board.includes("")) {
+                // BOARD IS FULL (DRAW)
+                // LOGIC: If Draw -> Player 1 wins automatically
+                endGame("X"); 
+                return true;
+            }
+
+            switchPlayer();
+            return false;
+        }
+
+        function endGame(winnerSymbol) {
+            isGameActive = false;
+
+            // Determine Winner and Loser based on the symbol passed
+            // If it was a draw, we passed "X" so P1 wins.
+            let winnerName = winnerSymbol === "X" ? p1Name : p2Name;
+            let loserName = winnerSymbol === "X" ? p2Name : p1Name;
+
+            if (winnerSymbol === "X") scores.p1++; else scores.p2++;
+
+            document.getElementById('status').innerText = `${winnerName} Wins!`;
+            updateScoreboard();
+
+            // Result Popup
+            let msgHTML = `<span class="winner-name">${winnerName}</span> wins the match!<br>
+                           <span class="loser-text">${loserName} better luck next time.</span>`;
+            
+            showPopup(msgHTML);
+        }
+
+        function updateScoreboard() {
+            document.getElementById('s-p1').innerText = scores.p1;
+            document.getElementById('s-p2').innerText = scores.p2;
+        }
+
+        // --- Popup & Reset Logic ---
+
+        function showPopup(htmlContent) {
+            const modal = document.getElementById('result-modal');
+            const txt = document.getElementById('modal-text');
+            const countdownDisplay = document.getElementById('countdown-text');
+            
+            txt.innerHTML = htmlContent;
+            modal.classList.remove('hidden');
+
+            let timeLeft = 5;
+            countdownDisplay.innerText = `Auto restart in ${timeLeft}s...`;
+            
+            clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                timeLeft--;
+                countdownDisplay.innerText = `Auto restart in ${timeLeft}s...`;
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    resetBoard();
+                }
+            }, 1000);
+        }
+
+        function resetBoard() {
+            clearInterval(countdownInterval);
+            document.getElementById('result-modal').classList.add('hidden');
+            
+            board = ["", "", "", "", "", "", "", "", ""];
+            isGameActive = true;
+            currentPlayer = "X";
+            document.getElementById('status').innerText = `${p1Name}'s Turn`;
+            
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.innerText = "";
+                cell.className = "cell";
+            });
+        }
+
+        // --- SAAB Function (Minimax AI) ---
+        function saabFunction() {
+            if (!isGameActive) return;
+            let bestScore = -Infinity;
+            let move;
+
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === "") {
+                    board[i] = "O";
+                    let score = minimax(board, 0, false);
+                    board[i] = "";
+                    if (score > bestScore) {
+                        bestScore = score;
+                        move = i;
+                    }
+                }
+            }
+            updateCell(move, "O");
+            checkResult();
+        }
+
+        function minimax(newBoard, depth, isMaximizing) {
+            if (checkWin(newBoard, "O")) return 10 - depth;
+            if (checkWin(newBoard, "X")) return depth - 10;
+            if (!newBoard.includes("")) return 0;
+
+            if (isMaximizing) {
+                let bestScore = -Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (newBoard[i] === "") {
+                        newBoard[i] = "O";
+                        let score = minimax(newBoard, depth + 1, false);
+                        newBoard[i] = "";
+                        bestScore = Math.max(score, bestScore);
+                    }
+                }
+                return bestScore;
+            } else {
+                let bestScore = Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (newBoard[i] === "") {
+                        newBoard[i] = "X";
+                        let score = minimax(newBoard, depth + 1, true);
+                        newBoard[i] = "";
+                        bestScore = Math.min(score, bestScore);
+                    }
+                }
+                return bestScore;
+            }
+        }
+
+        function checkWin(boardState, player) {
+            return winningConditions.some(condition => {
+                return condition.every(index => boardState[index] === player);
+            });
+        }
+    </script>
+</body>
+</html>

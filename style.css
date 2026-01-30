@@ -5,11 +5,15 @@
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* Background */
+/* BODY */
+
 body{
-    height:100vh;
-    overflow:hidden;
+    min-height:100vh;
+    overflow-x:hidden;
+    background:#0f172a;
 }
+
+/* BLUR BACKGROUND */
 
 .bg{
     position:fixed;
@@ -18,20 +22,23 @@ body{
     width:100%;
     height:100%;
     background:url("anmol.jpg") center/cover no-repeat;
-    filter: blur(8px);
+    filter: blur(10px) brightness(0.6);
     transform: scale(1.1);
     z-index:-1;
-   }
+}
 
-/* Center container */
+/* CENTER CONTAINER */
+
 .container{
     display:flex;
     justify-content:center;
     align-items:center;
     height:100vh;
+    padding-bottom:80px;
 }
 
-/* Glass Card */
+/* GLASS CARD */
+
 .card{
     width:350px;
     padding:40px;
@@ -41,28 +48,30 @@ body{
     border-radius:20px;
     box-shadow:0 15px 40px rgba(0,0,0,0.3);
     animation:fadeUp 1s ease;
-    transition:0.4s;
+    transition:0.4s ease;
 }
 
 .card:hover{
-    transform:translateY(-10px);
+    transform:translateY(-12px);
 }
 
-/* Profile Image */
+/* PROFILE IMAGE */
+
 .profile{
     width:130px;
     height:130px;
     border-radius:50%;
     border:4px solid white;
     object-fit:cover;
-    transition:0.5s;
+    transition:0.5s ease;
 }
 
 .card:hover .profile{
     transform:scale(1.1) rotate(5deg);
 }
 
-/* Text */
+/* TEXT */
+
 h1{
     margin-top:15px;
     color:white;
@@ -70,12 +79,13 @@ h1{
 }
 
 p{
-    color:#eee;
+    color:#e5e7eb;
     margin:8px 0 25px;
     font-size:15px;
 }
 
-/* Buttons */
+/* BUTTONS */
+
 .buttons{
     display:flex;
     flex-wrap:wrap;
@@ -85,14 +95,14 @@ p{
 
 .btn{
     text-decoration:none;
-    padding:10px 20px;
+    padding:10px 22px;
     border-radius:30px;
     background:white;
     color:#764ba2;
     font-weight:600;
-    transition:0.4s;
     position:relative;
     overflow:hidden;
+    transition:0.4s ease;
 }
 
 .btn::before{
@@ -103,7 +113,7 @@ p{
     width:100%;
     height:100%;
     background:linear-gradient(120deg,#667eea,#764ba2);
-    transition:0.4s;
+    transition:0.4s ease;
     z-index:-1;
 }
 
@@ -113,27 +123,38 @@ p{
 
 .btn:hover{
     color:white;
-    transform:scale(1.05);
+    transform:scale(1.08);
 }
 
-/* Social Icons */
-.socials{
-    margin-top:25px;
+/* FOOTER */
+
+.footer{
+    position:fixed;
+    bottom:0;
+    left:0;
+    height: 55px;
+    width:100%;
+    padding:16px 0;
+    text-align:center;
+    background:rgba(30,41,59,0.85);
+    backdrop-filter: blur(6px);
+    color:#94a3b8;
+    font-size:0.95rem;
+    letter-spacing:0.5px;
+    z-index:10;
 }
 
-.socials a{
-    color:white;
-    font-size:22px;
-    margin:0 10px;
-    transition:0.4s;
+.footer p{
+    transition:0.3s ease;
 }
 
-.socials a:hover{
-    color:#ffd86b;
-    transform:translateY(-5px);
+.footer p:hover{
+    color:#38bdf8;
+    text-shadow:0 0 12px #38bdf8;
 }
 
-/* Animation */
+/* ANIMATION */
+
 @keyframes fadeUp{
     from{
         opacity:0;
@@ -142,5 +163,24 @@ p{
     to{
         opacity:1;
         transform:translateY(0);
+    }
+}
+
+/* RESPONSIVE */
+
+@media(max-width:500px){
+
+    .card{
+        width:90%;
+        padding:30px;
+    }
+
+    .profile{
+        width:110px;
+        height:110px;
+    }
+
+    h1{
+        font-size:24px;
     }
 }
